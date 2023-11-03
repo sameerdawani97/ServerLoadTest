@@ -34,9 +34,8 @@ public class Albums extends javax.servlet.http.HttpServlet {
   public void init() throws ServletException {
     super.init();
     // Initialize the DynamoDB client
-    //dynamoDBAccess = new DynamoDBAccess();
-    dynamoDBAccess = new DynamoDBAccess("ASIAR3ZFQCRKLLRSUONN","+e4/RPMhW426vTiTJM/pcH+qmBysTOU9mPfVN2Wd",
-        "FwoGZXIvYXdzEPj//////////wEaDEGG5o8ex1P1es46WCLKATSmuJKtZItBfveEL4JKFoqRC62cLgXgNbIG5ZLIOfv5XR0Fms+XiPmS5EdnGYdlOhZZF/5ckeob6Ypr8kDyeKAwqGs8F8gZWF87hl8dlf4qZEyM/jmYKmA06aRG95/zJmqcMOZM9Py26TE9v7q/zY51N84mn0HX0Ns2WDQCwzqDDtB+UYDWJHd2VCHGiMcCbdYdrzywpE9Qn992rcVRr+VCi9xPLp10dehYg4No+9Bttij+rUOtHeKgYWdAMPQRIyFO70AJ9hOjDSEooJ+LqgYyLVuFAA8JIiMm01sNQdVrRDD/sdkYqU26cBu/P0ffosIPSEpUriumWs/6DTaoiQ==");
+    dynamoDBAccess = new DynamoDBAccess();
+
   }
   @Override
   protected void doGet(HttpServletRequest request, HttpServletResponse response)
