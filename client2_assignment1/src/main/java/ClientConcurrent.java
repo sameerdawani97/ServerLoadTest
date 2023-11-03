@@ -29,6 +29,11 @@ public class ClientConcurrent {
   private static AtomicInteger failedRequestsPost = new AtomicInteger(0);
 
 
+  /**
+   *
+   * @param args arguments for thread groups and their size, delays in seconds and ip address.
+   * @throws IOException IOException
+   */
   public static void main(String[] args) throws IOException {
     if (args.length != 4) {
       System.err.println("Four arguments should be passed: ");
@@ -106,13 +111,17 @@ public class ClientConcurrent {
     ConcurrentLinkedQueue<RequestInfo> csvRecord = new ConcurrentLinkedQueue<>();
     //List<RequestInfo> csvRecord = Collections.synchronizedList(arrayList1 );
 
-
-
+    /**
+     * Initial threads.
+     */
     for (int i = 0; i < INITIAL_THREADS_SIZE; i++) {
       initialThreads[i] = new Thread(() -> callRequests(baseUri, NUM_REQUESTS_PER_THREAD_FOR_INITIAL, requestGet, requestPost, csvRecord));
       initialThreads[i].start();
     }
 
+    /**
+     * All initial threads to be joined together before proceeding main threads requests.
+     */
     for (Thread thread : initialThreads) {
       try {
         thread.join();
@@ -121,12 +130,10 @@ public class ClientConcurrent {
       }
     }
 
+    // getting the start time of our main threads.
     startTime = System.currentTimeMillis();
 
     for (int i = 0; i < numOfGroups; i++) {
-      //System.out.println(i);
-      // Create and start threadGroupSize threads
-      //ExecutorService executor = Executors.newFixedThreadPool(threadGroupSize);
 
       for (int j = 0; j < threadGroupSize; j++) {
         Thread thread = new Thread(() -> callRequests(baseUri, NUM_REQUESTS_PER_THREAD_FOR_GROUP, requestGet, requestPost, csvRecord));
@@ -150,6 +157,7 @@ public class ClientConcurrent {
       }
     }
 
+    // end time taken for calculating wall time and through put
     endTime = System.currentTimeMillis();
     long wallTime = (endTime - startTime)/1000;
     long throughput = 2*numOfGroups*threadGroupSize*NUM_REQUESTS_PER_THREAD_FOR_GROUP / wallTime;
