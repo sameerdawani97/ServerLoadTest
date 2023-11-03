@@ -15,6 +15,9 @@ import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.concurrent.atomic.AtomicInteger;
 import org.json.JSONObject;
 
+/**
+ * Main client class to run client and calculate statistics and through put of program.
+ */
 public class ClientConcurrent {
   private static final int INITIAL_THREADS_SIZE = 10;
   private static final int NUM_REQUESTS_PER_THREAD_FOR_INITIAL = 100;
@@ -22,10 +25,8 @@ public class ClientConcurrent {
   public static HttpClient httpClient = HttpClient.newHttpClient();
 
   private static AtomicInteger successfulRequestsGet = new AtomicInteger(0);
-
   private static AtomicInteger failedRequestsGet = new AtomicInteger(0);
   private static AtomicInteger successfulRequestsPost = new AtomicInteger(0);
-
   private static AtomicInteger failedRequestsPost = new AtomicInteger(0);
 
 
@@ -141,7 +142,7 @@ public class ClientConcurrent {
         groupThreads.add(thread);
       }
 
-
+      // delay function for each thread group
       try {
         Thread.sleep(delayInSeconds * 1000);
       } catch (InterruptedException e) {
