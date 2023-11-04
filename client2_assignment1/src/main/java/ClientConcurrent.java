@@ -24,6 +24,10 @@ public class ClientConcurrent {
   private static final int NUM_REQUESTS_PER_THREAD_FOR_GROUP = 1000;
   public static HttpClient httpClient = HttpClient.newHttpClient();
 
+  private static double getMean = 0.0;
+  private static double postMean = 0.0;
+  private static double postMedian = 0.0;
+  private static double getMedian = 0.0;
   private static AtomicInteger successfulRequestsGet = new AtomicInteger(0);
   private static AtomicInteger failedRequestsGet = new AtomicInteger(0);
   private static AtomicInteger successfulRequestsPost = new AtomicInteger(0);
@@ -165,14 +169,22 @@ public class ClientConcurrent {
     System.out.println("Wall Time: " + wallTime + " seconds");
     System.out.println("Throughput: " + throughput + "/sec");
 
-    List<Long> values = new ArrayList<>();
-    System.out.println("Mean Latency: " + calculateMean(csvRecord, values) + " milliseconds");
+    List<Long> valuesGet = new ArrayList<>();
+    List<Long> valuesPost = new ArrayList<>();
+    calculateMean(csvRecord, valuesGet, valuesPost);
+    System.out.println("Mean Latency Get: " + getMean + " milliseconds");
+    System.out.println("Mean Latency Post: " + postMean + " milliseconds");
     // Sort the list in ascending order
-    Collections.sort(values);
-    System.out.println("Median Latency: " + calculateMedian(values) + " milliseconds");
-    System.out.println("99th percentile Latency: " + calculate99thPercentile(values) + " milliseconds");
-    System.out.println("Maximum Latency: " + max(values) + " milliseconds");
-    System.out.println("Minimum Latency: " + min(values) + " milliseconds");
+    Collections.sort(valuesGet);
+    Collections.sort(valuesPost);
+    System.out.println("Median Latency Get: " + calculateMedian(valuesGet) + " milliseconds");
+    System.out.println("Median Latency Post: " + calculateMedian(valuesPost) + " milliseconds");
+    System.out.println("99th percentile Latency Get: " + calculate99thPercentile(valuesGet) + " milliseconds");
+    System.out.println("99th percentile Latency Post: " + calculate99thPercentile(valuesGet) + " milliseconds");
+    System.out.println("Maximum Latency Get: " + max(valuesGet) + " milliseconds");
+    System.out.println("Maximum Latency Post: " + max(valuesPost) + " milliseconds");
+    System.out.println("Minimum Latency Get: " + min(valuesGet) + " milliseconds");
+    System.out.println("Minimum Latency Post: " + min(valuesPost) + " milliseconds");
     System.out.println("Successful Get requests: " + successfulRequestsGet.get());
     System.out.println("Failed Get requests: " + failedRequestsGet.get());
     System.out.println("Successful Post requests: " + successfulRequestsPost.get());
@@ -181,6 +193,7 @@ public class ClientConcurrent {
     writeCsv(csvRecord);
 
   }
+
 
   /**
    * This method is to calculate median value
@@ -209,17 +222,29 @@ public class ClientConcurrent {
   /**
    * This method is used to calculate mean value.
    * @param csvRecord csvRecord
-   * @param values values
+   * @param valuesGet values
+   * @param valuesPost values
    * @return mean value
    */
-  private static double calculateMean(ConcurrentLinkedQueue<RequestInfo> csvRecord, List<Long> values){
-    double mean = 0.0;
+  private static void calculateMean(ConcurrentLinkedQueue<RequestInfo> csvRecord, List<Long> valuesGet, List<Long> valuesPost){
+    double meanGet = 0.0;
+    double meanPost = 0.0;
+    int sizeGet = 0;
+    int sizePost = 0;
     for (RequestInfo requestInfo : csvRecord){
-      mean+=requestInfo.latency;
-      values.add(requestInfo.latency);
+      if (requestInfo.requestType == "POST"){
+        meanPost+=requestInfo.latency;
+        sizePost+=1;
+        valuesPost.add(requestInfo.latency);
+      }
+      else{
+        meanGet+=requestInfo.latency;
+        sizeGet+=1;
+        valuesGet.add(requestInfo.latency);
+      }
     }
-    mean = mean / csvRecord.size();
-    return mean;
+    getMean = meanGet / sizeGet;
+    postMean = meanPost / sizePost;
   }
 
   /**
